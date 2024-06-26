@@ -1,0 +1,8 @@
+body {
+  background-color: gray;
+  text-align: center;
+}
+div.thing {
+  width: 100vw;
+  height: 10rem;
+}

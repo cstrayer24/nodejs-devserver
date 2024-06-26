@@ -1,0 +1,21 @@
+{
+  "name": "nodewebserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "node  --watch .",
+    "start": "node .",
+    "build": "tsc",
+    "build-watch": "tsc --watch"
+  },
+  "bin": {
+    "devserve":"dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.9"
+  }
+}

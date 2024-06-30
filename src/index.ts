@@ -36,11 +36,14 @@ const port = parseInt(args[args.indexOf("-p") + 1]) || 3000;
 const webDir = args[0];
 const possiblePaths = getPossiblePaths(webDir);
 const server = createServer((req, res) => {
-  let realpathname = req.url.endsWith("/") ? `${req.url}index.html` : req.url;
+  const realpathname = req.url.endsWith("/") ? `${req.url}index.html` : req.url;
   if (!possiblePaths.includes(pathname2Route(realpathname))) {
     res.writeHead(404, "not found");
     res.end();
     return;
+  }
+  if (req.headers["sec-fetch-dest"] === "script") {
+    res.setHeader("Content-Type", "application/javascript");
   }
   res.writeHead(200, "success");
   res.write(readFileSync(`${webDir}/${pathname2Route(realpathname)}`));

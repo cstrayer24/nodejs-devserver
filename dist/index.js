@@ -21,26 +21,21 @@ function getPossiblePaths(rootpath) {
     };
     tempArr.forEach((v) => {
         if ((0, fs_1.statSync)(`${rootpath}/${v}`).isDirectory()) {
-            addDirPaths(v);
+            addDirPaths(`/${v}`);
         }
         else {
-            resArr.push(v);
+            resArr.push(`/${v}`);
         }
     });
     return resArr;
 }
-const pathname2Route = (pathname) => {
-    const strarr = pathname.split("");
-    strarr.shift();
-    return strarr.join("");
-};
 const args = process.argv.slice(2);
 const port = parseInt(args[args.indexOf("-p") + 1]) || 3000;
 const webDir = args[0];
 const possiblePaths = getPossiblePaths(webDir);
 const server = (0, http_1.createServer)((req, res) => {
     const realpathname = req.url.endsWith("/") ? `${req.url}index.html` : req.url;
-    if (!possiblePaths.includes(pathname2Route(realpathname))) {
+    if (!possiblePaths.includes(realpathname)) {
         res.writeHead(404, "not found");
         res.end();
         return;
@@ -48,10 +43,8 @@ const server = (0, http_1.createServer)((req, res) => {
     if (req.headers["sec-fetch-dest"] === "script") {
         res.setHeader("Content-Type", "application/javascript");
     }
-    console.log(req.url);
-    console.log(req.headers);
     res.writeHead(200, "success");
-    res.write((0, fs_1.readFileSync)(`${webDir}/${pathname2Route(realpathname)}`));
+    res.write((0, fs_1.readFileSync)(`${webDir}${realpathname}`));
     res.end();
 });
 console.log(`server running on http://localhost:${port}`);

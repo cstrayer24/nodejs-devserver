@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 import { readFileSync, readdirSync, statSync } from "fs";
 import { createServer } from "http";
+
+function isInIgnoreList(route: string) {
+  const ignoreList = [".git", ".DS_Store"];
+  const routeTokens = route.split("/");
+  return routeTokens.find((v) => ignoreList.includes(v));
+}
 function getPossiblePaths(rootpath: string) {
   //unhandled error is intentional the server should crash if an invalid directory is given as input
   const tempArr = readdirSync(rootpath);
@@ -32,6 +38,12 @@ const webDir = args[0];
 const possiblePaths = getPossiblePaths(webDir);
 const server = createServer((req, res) => {
   const realpathname = req.url.endsWith("/") ? `${req.url}index.html` : req.url;
+  if (isInIgnoreList(realpathname)) {
+    console.log("is in ignore list");
+    res.writeHead(404, "not found");
+    res.end();
+    return;
+  }
   if (!possiblePaths.includes(realpathname)) {
     res.writeHead(404, "not found");
     res.end();

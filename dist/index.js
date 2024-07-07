@@ -3,6 +3,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
 const http_1 = require("http");
+function isInIgnoreList(route) {
+    const ignoreList = [".git", ".DS_Store"];
+    const routeTokens = route.split("/");
+    return routeTokens.find((v) => ignoreList.includes(v));
+}
 function getPossiblePaths(rootpath) {
     //unhandled error is intentional the server should crash if an invalid directory is given as input
     const tempArr = (0, fs_1.readdirSync)(rootpath);
@@ -35,6 +40,12 @@ const webDir = args[0];
 const possiblePaths = getPossiblePaths(webDir);
 const server = (0, http_1.createServer)((req, res) => {
     const realpathname = req.url.endsWith("/") ? `${req.url}index.html` : req.url;
+    if (isInIgnoreList(realpathname)) {
+        console.log("is in ignore list");
+        res.writeHead(404, "not found");
+        res.end();
+        return;
+    }
     if (!possiblePaths.includes(realpathname)) {
         res.writeHead(404, "not found");
         res.end();
